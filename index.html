@@ -90,6 +90,7 @@ main { padding-block: 14px 48px; display: grid; gap: 22px; }
 .chipbtn[aria-pressed="true"] { background: var(--c-popups); color: #fff; border-color: var(--c-popups); }
 .pcount { font-size: 13px; color: var(--sub); }
 .gu h3 { font-family: var(--f-display); font-size: 14.5px; margin: 12px 0 4px; color: var(--c-popups); display: flex; gap: 6px; align-items: baseline; }
+.gu.mine { margin-bottom: 14px; border: 1.5px solid var(--c-popups); border-radius: 10px; padding: 2px 8px 8px; }
 .gu h3 .k { font-family: var(--f-num); font-size: 12px; color: var(--sub); }
 .prow { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: var(--surface); }
 .prow:first-of-type { border-top-left-radius: 8px; border-top-right-radius: 8px; }
@@ -204,6 +205,11 @@ function renderPopups() {
       <div class="frow">${kinds.map(([k, l]) => `<button class="chipbtn" data-kind="${k}" aria-pressed="${pf.kind === k}">${l}</button>`).join("")}</div>
       <div class="pcount">서울 팝업 ${rows.length}개 / 전체 ${all.length}개 · 출처 데이포유 · 주제 무관, 어린이 대상은 뺐습니다</div>
     </div>
+    ${(() => { const mine = rows.filter(p => (p.interest || []).length)
+        .sort((a, b) => (a.start > TODAY) - (b.start > TODAY) || a.end.localeCompare(b.end));
+      return mine.length ? `<div class="gu mine"><h3>★ 내 관심사 팝업 <span class="k">${mine.length}</span></h3>${mine
+        .map(p => `<div class="prow${MARKS.done["p" + p.seq] ? " done" : ""}"><div class="pt"><a href="${DETAIL}${p.seq}" target="_blank" rel="noopener">${esc(p.title)}</a></div>
+        <div class="pd">${rng(p)}</div><div class="pl"><span class="b new">${esc(p.interest.join("·"))}</span> ${esc(p.gu)} ${esc(p.place)} ${tag[kindOf(p)] || ""}${markBtns("p" + p.seq)}</div></div>`).join("")}</div>` : ""; })()}
     ${order.length ? order.map(g => `<div class="gu"><h3>${g} <span class="k">${groups[g].length}</span></h3>${groups[g]
       .sort((a, b) => (a.start > TODAY) - (b.start > TODAY) || a.end.localeCompare(b.end))
       .map(p => `<div class="prow${MARKS.done["p" + p.seq] ? " done" : ""}"><div class="pt"><a href="${DETAIL}${p.seq}" target="_blank" rel="noopener">${esc(p.title)}</a></div>
